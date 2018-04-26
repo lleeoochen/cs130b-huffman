@@ -1,0 +1,22 @@
+
+Example usage on the input file 'sample.in'
+
+ $~]  cat sample.in | ./frequencies 
+    10      4
+    32      32
+    46      4
+    84      4
+    .... (and so on)
+
+ $~] cat sample.in | ./frequencies | ./huffman 
+    832
+    (And also generates the file 'codewords.txt')
+
+ $~] cat sample.in | ./encode codewords.txt > encoded
+
+    Encodes the file and redirects output to the file 'encoded'
+
+ $~] cat encoded | ./decode codewords.txt > decoded 
+
+    Encodes the file and redirects output to the file 'decoded'
+

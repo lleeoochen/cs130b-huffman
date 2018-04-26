@@ -1,0 +1,8 @@
+#!/usr/bin/perl
+open FILE, "<codewords.txt";
+/^\s*(\d+)\s+([01]+)\s*$/ and $_{$2}=chr$1 while <FILE>;
+$/=\1;$"='|';
+while (<STDIN>) {
+    $x .= unpack 'b*',$_;
+    print $_{$1} while $x =~ s/^(@{[keys%_]})//o;
+}

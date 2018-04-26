@@ -1,5 +1,6 @@
 #include <iostream>
-#include <vector>
+#include <fstream>
+#include <queue>
 #include <algorithm>
 #include <iomanip>
 
@@ -18,13 +19,18 @@ struct Node {
 	Node* right;
 };
 
-void traverse(Node* root, std::string code);
-void prettyPrint(Node* p, int indent);
+struct Compare {
+    bool operator() (Node* a, Node* b) {
+		return a->weight > b->weight;
+	}
+};
+
+void traverse(Node* root, std::string code, std::ofstream& file);
 int fileSize = 0;
 
 int main() {
 
-	std::vector<Node*> huffTable;
+	std::priority_queue<Node*, std::vector<Node*>, Compare> huffTable;
 
 	while (!std::cin.eof()) {
 
@@ -35,7 +41,7 @@ int main() {
 		    std::string ch = line.substr(0, line.find('\t'));
 		    std::string fq = line.substr(line.find('\t') + 1, line.length() - ch.length() - 1);
 		    Node* node = new Node(stoi(ch), stoi(fq), stoi(fq), NULL, NULL);
-		    huffTable.push_back(node);
+		    huffTable.push(node);
 	    }
 
 	    if (std::cin.fail())
@@ -43,66 +49,40 @@ int main() {
 	}
 
 	while (huffTable.size() > 1) {
-		std::sort(huffTable.begin(), huffTable.end(), [](Node* a, Node* b) -> bool {
-			return a->weight > b->weight;
-		});
+		Node* node1 = huffTable.top();
+		huffTable.pop();
 
-		// for (int i = 0; i < huffTable.size(); i++) {
-		// 	std::cout << huffTable[i]->weight << " ";
-		// }
-		// std::cout << std::endl;
-
-		Node* node1 = huffTable[huffTable.size() - 1];
-		Node* node2 = huffTable[huffTable.size() - 2];
-		huffTable.pop_back();
-		huffTable.pop_back();
-		std::cout << node1->ch << "\t" << node1->weight << std::endl;
+		Node* node2 = huffTable.top();
+		huffTable.pop();
 
 		Node* newNode = new Node(-1, -1, node1->weight + node2->weight, node1, node2);
-		huffTable.push_back(newNode);
+		huffTable.push(newNode);
 	}
 
-	traverse(huffTable[0], "");
-	// prettyPrint(huffTable[0], 0);
+
+	std::ofstream file; file.open ("codewords.txt");
+
+	traverse(huffTable.top(), "", file);
+	
+	file.close();
+
 	std::cout << fileSize << std::endl;
+
 	return 0;
 }
 
-void traverse(Node* root, std::string code) {
+void traverse(Node* root, std::string code, std::ofstream& file) {
 
 	if (root->left == NULL && root->right == NULL) {
-		// std::cout << root->fq << ", " << code << std::endl;
+		file << root->ch << "\t" << code << "\n";
 		fileSize += code.length() * root->fq;
 		return;
 	}
 
 	if (root->left != NULL)
-		traverse(root->left, code + "0");
+		traverse(root->left, code + "0", file);
 
 	if (root->right != NULL)
-		traverse(root->right, code + "1");
+		traverse(root->right, code + "1", file);
 
-}
-
-void prettyPrint(Node* p, int indent) {
-    if(p != NULL) {
-        
-        if(p->right) {
-            prettyPrint(p->right, indent+4);
-        }
-        
-        if (indent) {
-            std::cout << std::setw(indent) << ' ';
-        }
-        
-        if (p->right)
-        	std::cout<<" /\n" << std::setw(indent) << ' ';
-        
-        std::cout<< p->fq << "\n ";
-        
-        if(p->left) {
-            std::cout << std::setw(indent) << ' ' <<" \\\n";
-            prettyPrint(p->left, indent+4);
-        }
-    }
 }

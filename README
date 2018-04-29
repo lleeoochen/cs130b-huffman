@@ -1,0 +1,3 @@
+Wei Tung Chen: weitung_chen@umail.ucsb.edu
+
+The encoded file size will be slightly larger (constant) since I added 1 byte for padding identification, and 1-7 bits for the actual trailing padding.

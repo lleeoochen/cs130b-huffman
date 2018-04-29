@@ -1,9 +1,9 @@
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 int main() {
 
-	std::map<int, int> table;
+	std::unordered_map<int, int> table;
 	char lastCh = ' ';
 
 	while (!std::cin.eof()) {

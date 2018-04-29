@@ -20,20 +20,33 @@ int main(int argc, char* argv[]) {
 	}
 
 	//Get input from std
+	std::string leftover = "", prevCode = "";
 	while (!std::cin.eof()) {
+
 	    char ch;
 		std::cin >> std::noskipws >> ch;
-		std::string code = std::to_string(std::stoi(std::bitset<8>(ch).to_string()));
-		code = code.substr(1, code.length() - 1);
+		std::string code = std::bitset<8>(ch).to_string();
 
-		// if (my_map[k1].find(k2) != my_map[k1].end())
+		prevCode = code;
+		code = leftover + code;
+		leftover = "";
 
-		char word = stoi(table[code]);
-		if (!std::cin.eof() || word != '\n')
-			std::cout << word;
+		std::string subcode = "";
+		for (int i = 0; i < code.length(); i++) {
+
+			subcode += code[i];
+			if (table.count(subcode) >= 1) {
+
+				char word = stoi(table[subcode]);
+				if (!std::cin.eof() || code != prevCode)
+					std::cout << word;
+
+				subcode = "";
+			}
+		}
+
+		leftover = subcode;
 	}
-
-	// std::cout << std::endl;
 
 	return 0;
 }
